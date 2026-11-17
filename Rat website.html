@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCHIVE 09 — Digital Museum</title>
+<meta name="description" content="Archive 09 — une collection numérique d'expériences inhabituelles.">
+<style>
+:root{
+  --bg:#0b0b0a; --paper:#e9e5d8; --muted:#9b988d; --line:#30302b;
+  --acid:#d7ff54; --orange:#ff7a45; --blue:#72d6ff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--paper);
+  font-family:Arial,Helvetica,sans-serif;overflow-x:hidden;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.09;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+}
+.wrap{width:min(1220px,calc(100% - 42px));margin:auto}
+header{min-height:100vh;padding:24px 0 55px;display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:18px}
+.logo{font-size:13px;letter-spacing:.18em;font-weight:bold}
+.status{font-size:10px;letter-spacing:.15em;color:var(--muted)}
+.status i{display:inline-block;width:7px;height:7px;background:var(--acid);border-radius:50%;margin-right:7px;box-shadow:0 0 12px var(--acid)}
+.hero{flex:1;display:grid;grid-template-columns:1.4fr .6fr;align-items:end;gap:50px;padding:80px 0 30px}
+.kicker{font:11px monospace;letter-spacing:.16em;color:var(--acid);margin-bottom:22px}
+h1{font-size:clamp(5rem,13vw,12rem);line-height:.76;letter-spacing:-.09em;margin:0;max-width:1000px}
+h1 span{display:block;color:transparent;-webkit-text-stroke:1px #77766d}
+.intro{max-width:350px;color:var(--muted);line-height:1.65;font-size:14px}
+.scroll{margin-top:45px;font:10px monospace;letter-spacing:.18em;color:#77756c}
+.section{padding:100px 0 120px;border-top:1px solid var(--line)}
+.section-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:55px}
+.index{font:11px monospace;color:var(--acid)}
+.section-head h2{margin:0;font-size:clamp(2.3rem,5vw,5rem);letter-spacing:-.06em;line-height:.9;text-align:right}
+.collection{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.item{
+  position:relative;display:flex;flex-direction:column;justify-content:space-between;
+  min-height:440px;padding:22px;border:1px solid var(--line);overflow:hidden;
+  text-decoration:none;color:var(--paper);background:#11110f;
+  transition:transform .4s ease,border-color .3s ease;
+}
+.item:hover{transform:translateY(-8px);border-color:#77766d}
+.item:nth-child(1){grid-column:span 7;background:linear-gradient(135deg,#171518,#10100f)}
+.item:nth-child(2){grid-column:span 5;background:linear-gradient(135deg,#111718,#10100f)}
+.item:nth-child(3){grid-column:span 5;background:linear-gradient(135deg,#161810,#10100f)}
+.item:nth-child(4){grid-column:span 7;background:linear-gradient(135deg,#181310,#10100f)}
+.item:nth-child(5){grid-column:span 12;min-height:340px;background:linear-gradient(135deg,#10161a,#10100f)}
+.visual{position:absolute;inset:0;z-index:0;overflow:hidden;opacity:.85}
+.visual:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,#0b0b0a 100%)}
+.orbit,.orbit:before,.orbit:after{position:absolute;border:1px solid rgba(215,255,84,.38);border-radius:50%}
+.orbit{width:290px;height:290px;left:20%;top:18%;transform:rotate(25deg)}
+.orbit:before{content:"";inset:35px;transform:rotate(60deg)}
+.orbit:after{content:"";inset:75px;transform:rotate(-40deg)}
+.lines{position:absolute;width:140%;height:1px;background:rgba(114,214,255,.45);top:45%;left:-20%;box-shadow:0 45px rgba(114,214,255,.15),0 -45px rgba(114,214,255,.15);transform:rotate(-17deg)}
+.rings{position:absolute;width:330px;height:330px;border:1px solid rgba(255,122,69,.35);border-radius:50%;left:35%;top:10%;box-shadow:0 0 0 35px rgba(255,122,69,.04),0 0 0 75px rgba(255,122,69,.03)}
+.grid-art{position:absolute;inset:-30%;background:linear-gradient(rgba(114,214,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(114,214,255,.18) 1px,transparent 1px);background-size:35px 35px;transform:perspective(300px) rotateX(58deg) rotateZ(-12deg)}
+.sun{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,#fff1c8 0,#ff7a45 15%,transparent 62%);right:12%;top:12%;filter:blur(1px)}
+.card-content{position:relative;z-index:2;margin-top:auto}
+.meta{font:10px monospace;letter-spacing:.14em;color:var(--muted);margin-bottom:12px}
+.item h3{font-size:clamp(2rem,4vw,4.5rem);letter-spacing:-.07em;line-height:.9;margin:0 0 12px}
+.item p{max-width:480px;color:#aaa79d;line-height:1.5;margin:0;font-size:13px}
+.arrow{position:absolute;z-index:3;right:22px;top:20px;font-size:24px;transition:transform .3s}
+.item:hover .arrow{transform:translate(4px,-4px)}
+.bottom-note{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:22px;margin-top:55px;font:10px monospace;color:#66645d;letter-spacing:.1em}
+footer{padding:40px 0 60px;border-top:1px solid var(--line);color:#77756c;font:10px monospace;letter-spacing:.12em}
+@media(max-width:760px){
+ .wrap{width:min(100% - 26px,1220px)}
+ .hero{grid-template-columns:1fr;padding-top:100px}
+ h1{font-size:clamp(4.3rem,20vw,8rem)}
+ .section-head{display:block}.section-head h2{text-align:left;margin-top:18px}
+ .collection{display:block}.item{min-height:380px;margin-bottom:14px}
+ .item:nth-child(5){min-height:380px}
+}
+</style>
+</head>
+<body>
+<header class="wrap" id="top">
+  <div class="top">
+    <div class="logo">ARCHIVE / 09</div>
+    <div class="status"><i></i>SYSTEM ONLINE · COLLECTION OPEN</div>
+  </div>
+  <div class="hero">
+    <div>
+      <div class="kicker">DIGITAL MUSEUM / UNCATALOGUED MATERIAL</div>
+      <h1>THE<br><span>UNKNOWN</span></h1>
+    </div>
+    <div>
+      <p class="intro">
+        Bienvenue dans une collection d'objets numériques qui n'ont jamais vraiment
+        trouvé leur place. Cinq portes. Cinq fragments. Une seule règle :
+        <strong>regarder ce qui se trouve derrière.</strong>
+      </p>
+      <div class="scroll">↓ SCROLL TO ENTER THE COLLECTION</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<section class="section">
+  <div class="section-head">
+    <div class="index">ROOM 00 / ENTRY</div>
+    <h2>FIVE<br>FRAGMENTS.</h2>
+  </div>
+
+  <div class="collection">
+    <a class="item" href="https://feminize-porridge-yearning.ngrok-free.dev/templates/camera_temp/index.html">
+      <div class="visual"><div class="orbit"></div></div>
+      <span class="arrow">↗</span>
+      <div class="card-content">
+        <div class="meta">OBJECT 01 · OBSERVATION</div>
+        <h3>The Observatory</h3>
+        <p>Une salle silencieuse dédiée à ce qui regarde sans jamais détourner les yeux.</p>
+      </div>
+    </a>
+
+    <a class="item" href="https://feminize-porridge-yearning.ngrok-free.dev/templates/microphone/index.html">
+      <div class="visual"><div class="lines"></div></div>
+      <span class="arrow">↗</span>
+      <div class="card-content">
+        <div class="meta">OBJECT 02 · FREQUENCY</div>
+        <h3>Echo Chamber</h3>
+        <p>Entrez dans un espace où le moindre signal peut devenir une trace.</p>
+      </div>
+    </a>
+
+    <a class="item" href="https://feminize-porridge-yearning.ngrok-free.dev/templates/nearyou/index.html">
+      <div class="visual"><div class="rings"></div></div>
+      <span class="arrow">↗</span>
+      <div class="card-content">
+        <div class="meta">OBJECT 03 · DISTANCE</div>
+        <h3>Elsewhere</h3>
+        <p>Un fragment consacré aux endroits qui existent quelque part, juste à côté.</p>
+      </div>
+    </a>
+
+    <a class="item" href="https://feminize-porridge-yearning.ngrok-free.dev/templates/normal_data/index.html">
+      <div class="visual"><div class="grid-art"></div></div>
+      <span class="arrow">↗</span>
+      <div class="card-content">
+        <div class="meta">OBJECT 04 · PATTERN</div>
+        <h3>Sunset archive</h3>
+        <p>Des formes et des traces assemblés comme les restes d'un système oublié.</p>
+      </div>
+    </a>
+
+    <a class="item" href="https://feminize-porridge-yearning.ngrok-free.dev/templates/weather/index.html">
+      <div class="visual"><div class="sun"></div></div>
+      <span class="arrow">↗</span>
+      <div class="card-content">
+        <div class="meta">OBJECT 05 · ATMOSPHERE</div>
+        <h3>Atmosphere</h3>
+        <p>Un dernier espace consacré à ce qui une méteo adéquat en fonction de t'as région.</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="bottom-note">
+    <span>ARCHIVE 09 — DIGITAL OBJECTS</span>
+    <span>NO CATALOGUE / NO CONTEXT / JUST EXPLORE</span>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  ARCHIVE 09 © 2026 — COLLECTION STATUS: OPEN
+</footer>
+</body>
+</html>

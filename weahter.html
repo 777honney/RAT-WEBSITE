@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Météo Live</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .weather-side {
+            position: relative;
+            width: 380px;
+            padding: 40px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 500px;
+        }
+
+        .date-container {
+            color: white;
+        }
+
+        .date-dayname {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .date-day {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .location-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .weather-container {
+            text-align: center;
+            color: white;
+        }
+
+        .weather-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+        }
+
+        .weather-temp {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .weather-desc {
+            font-size: 1.3rem;
+            font-weight: 500;
+            opacity: 0.95;
+            text-transform: capitalize;
+        }
+
+        .info-side {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .today-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .today-info > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .today-info > div:last-child {
+            border-bottom: none;
+        }
+
+        .title {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .week-container {
+            flex: 1;
+        }
+
+        .week-list {
+            display: flex;
+            gap: 10px;
+            list-style: none;
+            overflow-x: auto;
+            padding: 5px;
+        }
+
+        .week-list li {
+            flex: 1;
+            min-width: 70px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .week-list li:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .week-list li.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: #764ba2;
+        }
+
+        .day-icon {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto 8px;
+        }
+
+        .day-name {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .day-temp {
+            display: block;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .location-container {
+            margin-top: auto;
+        }
+
+        .location-button {
+            width: 100%;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .location-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .location-button:active {
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4757;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .weather-side {
+                width: 100%;
+                min-height: auto;
+                padding: 30px;
+            }
+            
+            .weather-temp {
+                font-size: 4rem;
+            }
+            
+            .week-list {
+                gap: 8px;
+            }
+            
+            .week-list li {
+                min-width: 60px;
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <span>Chargement de la météo...</span>
+    </div>
+
+    <div class="error-message" id="errorMsg"></div>
+
+    <div class="container">
+        <div class="weather-side">
+            <div class="date-container">
+                <h2 class="date-dayname" id="dayName">Lundi</h2>
+                <span class="date-day" id="fullDate">28 Sept 2026</span>
+                <div class="location">
+                    <svg class="location-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span id="locationText">Chargement...</span>
+                </div>
+            </div>
+            <div class="weather-container">
+                <svg class="weather-icon" id="mainIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <h1 class="weather-temp" id="temp">--°C</h1>
+                <h3 class="weather-desc" id="desc">Chargement...</h3>
+            </div>
+        </div>
+        <div class="info-side">
+            <div class="today-info-container">
+                <div class="today-info">
+                    <div class="precipitation">
+                        <span class="title">Précipitations</span>
+                        <span class="value" id="precip">--%</span>
+                    </div>
+                    <div class="humidity">
+                        <span class="title">Humidité</span>
+                        <span class="value" id="humidity">--%</span>
+                    </div>
+                    <div class="wind">
+                        <span class="title">Vent</span>
+                        <span class="value" id="wind">-- km/h</span>
+                    </div>
+                </div>
+            </div>
+            <div class="week-container">
+                <ul class="week-list" id="forecast">
+                    <!-- Les prévisions seront générées dynamiquement -->
+                </ul>
+            </div>
+            <div class="location-container">
+                <button class="location-button" onclick="getLocation()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>Ma position</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TON API KEY OpenWeatherMap
+        const API_KEY = '9e161a25538dc6a860f03e5529dfab0a';
+        
+        // URLs de l'API
+        const CURRENT_URL = 'https://api.openweathermap.org/data/2.5/weather';
+        const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+
+        // Icônes SVG
+        const icons = {
+            sun: `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`,
+            cloud: `<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>`,
+            rain: `<line x1="16" y1="13" x2="16" y2="21"></line><line x1="8" y1="13" x2="8" y2="21"></line><line x1="12" y1="15" x2="12" y2="23"></line><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path>`,
+            snow: `<path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"></path><line x1="8" y1="16" x2="8.01" y2="16"></line><line x1="8" y1="20" x2="8.01" y2="20"></line><line x1="12" y1="18" x2="12.01" y2="18"></line><line x1="12" y1="22" x2="12.01" y2="22"></line><line x1="16" y1="16" x2="16.01" y2="16"></line><line x1="16" y1="20" x2="16.01" y2="20"></line>`,
+            storm: `<path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"></path><polyline points="13 11 9 17 15 17 11 23"></polyline>`,
+            mist: `<line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line>`
+        };
+
+        // Correspondance des codes météo OpenWeatherMap avec les icônes
+        function getWeatherIcon(code) {
+            if (code >= 200 && code < 300) return 'storm';
+            if (code >= 300 && code < 600) return 'rain';
+            if (code >= 600 && code < 700) return 'snow';
+            if (code >= 700 && code < 800) return 'mist';
+            if (code === 800) return 'sun';
+            return 'cloud';
+        }
+
+        // Traduction des conditions
+        function translateCondition(condition) {
+            const translations = {
+                'clear sky': 'Ciel dégagé',
+                'few clouds': 'Quelques nuages',
+                'scattered clouds': 'Nuages épars',
+                'broken clouds': 'Nuages fragmentés',
+                'overcast clouds': 'Ciel couvert',
+                'shower rain': 'Averses',
+                'rain': 'Pluie',
+                'light rain': 'Pluie légère',
+                'moderate rain': 'Pluie modérée',
+                'heavy rain': 'Pluie forte',
+                'thunderstorm': 'Orage',
+                'snow': 'Neige',
+                'mist': 'Brume',
+                'fog': 'Brouillard',
+                'haze': 'Brume'
+            };
+            return translations[condition.toLowerCase()] || condition;
+        }
+
+        // Récupérer la météo actuelle et les prévisions
+        async function fetchWeather(lat, lon) {
+            try {
+                // Météo actuelle
+                const currentResponse = await fetch(
+                    `${CURRENT_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=fr`
+                );
+                
+                if (!currentResponse.ok) {
+                    throw new Error('Erreur API météo actuelle');
+                }
+                
+                const currentData = await currentResponse.json();
+
+                // Prévisions sur 5 jours
+                const forecastResponse = await fetch(
+                    `${FORECAST_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=fr`
+                );
+                
+                if (!forecastResponse.ok) {
+                    throw new Error('Erreur API prévisions');
+                }
+                
+                const forecastData = await forecastResponse.json();
+
+                // Mettre à jour l'affichage
+                updateWeatherDisplay(currentData, forecastData);
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Impossible de récupérer les données météo. Vérifie ta connexion.');
+            }
+        }
+
+        // Mettre à jour l'affichage avec les données
+        function updateWeatherDisplay(current, forecast) {
+            // Ville et pays
+            document.getElementById('locationText').textContent = 
+                `${current.name}, ${current.sys.country}`;
+
+            // Température et description
+            document.getElementById('temp').textContent = `${Math.round(current.main.temp)}°C`;
+            document.getElementById('desc').textContent = translateCondition(current.weather[0].description);
+
+            // Détails
+            document.getElementById('humidity').textContent = `${current.main.humidity}%`;
+            document.getElementById('wind').textContent = 
+                `${Math.round(current.wind.speed * 3.6)} km/h`;
+            
+            // Probabilité de précipitations
+            const pop = forecast.list[0].pop || 0;
+            document.getElementById('precip').textContent = `${Math.round(pop * 100)}%`;
+
+            // Icône principale
+            const iconType = getWeatherIcon(current.weather[0].id);
+            document.getElementById('mainIcon').innerHTML = icons[iconType];
+
+            // Prévisions des 5 prochains jours
+            updateForecast(forecast);
+        }
+
+        // Mettre à jour les prévisions
+        function updateForecast(forecastData) {
+            const forecastList = document.getElementById('forecast');
+            forecastList.innerHTML = '';
+
+            // Prendre une prévision par jour
+            const dailyForecasts = [];
+            const seenDays = new Set();
+
+            for (const item of forecastData.list) {
+                const date = new Date(item.dt * 1000);
+                const dayKey = date.toDateString();
+                
+                if (!seenDays.has(dayKey) && dailyForecasts.length < 5) {
+                    seenDays.add(dayKey);
+                    dailyForecasts.push(item);
+                }
+            }
+
+            const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+            dailyForecasts.forEach((item, index) => {
+                const date = new Date(item.dt * 1000);
+                const dayName = days[date.getDay()];
+                const temp = Math.round(item.main.temp);
+                const iconType = getWeatherIcon(item.weather[0].id);
+
+                const li = document.createElement('li');
+                if (index === 0) li.classList.add('active');
+                
+                li.innerHTML = `
+                    <svg class="day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        ${icons[iconType]}
+                    </svg>
+                    <span class="day-name">${dayName}</span>
+                    <span class="day-temp">${temp}°</span>
+                `;
+
+                li.addEventListener('click', function() {
+                    document.querySelectorAll('.week-list li').forEach(li => li.classList.remove('active'));
+                    this.classList.add('active');
+                });
+
+                forecastList.appendChild(li);
+            });
+        }
+
+        // Afficher une erreur
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+
+        // Géolocalisation
+        function getLocation() {
+            const loading = document.getElementById('loading');
+            
+            if (!navigator.geolocation) {
+                showError('La géolocalisation n\'est pas supportée par ton navigateur');
+                return;
+            }
+
+            loading.classList.add('active');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    // Appel de fetchWeather avec les coordonnées
+                    fetchWeather(lat, lon).then(() => {
+                        loading.classList.remove('active');
+                    });
+                },
+                (error) => {
+                    loading.classList.remove('active');
+                    let message = 'Erreur de géolocalisation';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message = 'Tu as refusé la géolocalisation';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message = 'Position indisponible';
+                            break;
+                        case error.TIMEOUT:
+                            message = 'Délai dépassé';
+                            break;
+                    }
+                    showError(message);
+                }
+            );
+        }
+
+        // Mettre à jour la date
+        function updateDate() {
+            const now = new Date();
+            const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+            const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+            
+            document.getElementById('dayName').textContent = days[now.getDay()];
+            document.getElementById('fullDate').textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+        }
+
+        // Charger la météo au démarrage (géolocalisation ou Paris par défaut)
+        window.onload = function() {
+            updateDate();
+            
+            // Essayer de récupérer la position automatiquement au chargement
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        fetchWeather(position.coords.latitude, position.coords.longitude);
+                    },
+                    () => {
+                        // Si échec, charger Paris par défaut
+                        fetchWeather(48.8566, 2.3522);
+                    }
+                );
+            } else {
+                // Pas de géolocalisation, charger Paris
+                fetchWeather(48.8566, 2.3522);
+            }
+        };
+    </script>
+</body>
+</html>
